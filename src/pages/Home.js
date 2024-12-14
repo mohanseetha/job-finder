@@ -17,6 +17,7 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
+import banner from "../assets/banner.gif";
 
 const Home = () => {
   const [jobs, setJobs] = useState([]);
@@ -99,7 +100,7 @@ const Home = () => {
             Explore Jobs
           </Button>
         </VStack>
-        <Image src="https://cdn.dribbble.com/users/3848091/screenshots/7827479/media/5f226eb6aa71d3b639a73d214e716db6.gif" aspectRatio={4/3} width={500} borderRadius={10}></Image>
+        <Image src={banner} aspectRatio={4/3} width={500} borderRadius={10}></Image>
       </Flex>
 
       <Box bg={cardBgColor} p={6} rounded="lg" shadow="lg" maxW="1200px" mx="auto" mb={12}>
