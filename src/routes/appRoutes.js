@@ -9,7 +9,7 @@ import NotFound from "../pages/NotFound";
 import Profile from "../pages/Profile";
 import JobDetails from "../pages/JobDetails";
 import ProtectedRoutes from "../components/ProtectedRoutes";
-import PostJob from "../pages/PostJob";
+import ApplicationPage from "../pages/Application";
 
 const AppRoutes = () => {
   return (
@@ -17,15 +17,17 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/jobs" element={<JobListings />} />
       <Route path="/job-details/:jobId" element={<JobDetails />} />
+      <Route path="/about" element={<About />} /> 
+      <Route path="*" element={<NotFound />} />
       <Route path="/login" element={<ProtectedRoutes isProtected={false} />}>
         <Route index element={<Login />} />
       </Route>
       <Route path="/signup" element={<ProtectedRoutes isProtected={false} />}>
         <Route index element={<Signup />} />
       </Route>
-      <Route path="/post-job" element={<PostJob />} />
-      <Route path="/about" element={<About />} /> 
-      <Route path="*" element={<NotFound />} />
+      <Route path="/application/:jobId" element={<ProtectedRoutes isProtected={true} />}>
+        <Route index element={<ApplicationPage />} />
+      </Route>
       <Route path="/profile" element={<ProtectedRoutes isProtected={true} />}>
         <Route index element={<Profile />} />
       </Route>

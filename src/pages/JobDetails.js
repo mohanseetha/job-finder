@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, Text, Button, Badge, Spinner } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { Box, Heading, Text, Button, Badge, Spinner, ListItem, List } from "@chakra-ui/react";
+import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const JobDetails = () => {
   const { jobId } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
+  const auth = getAuth();
 
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    setCurrentUser(user);
+    console.log("Current user:", user);
+  } else {
+    setCurrentUser(null);
+    console.log("No user signed in");
+  }
+});
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
@@ -46,9 +59,6 @@ const JobDetails = () => {
         {job?.company} | Location: {job?.location}
       </Text>
       <Text fontSize="md" color="gray.600" mb={4}>
-        <strong>Description: </strong>{job?.description}
-      </Text>
-      <Text fontSize="md" color="gray.600" mb={4}>
         <strong>Skills: </strong>
         {job?.skills.map((skill, index) => (
           <Badge key={index} colorScheme="green" mr={2}>
@@ -59,9 +69,43 @@ const JobDetails = () => {
       <Text fontSize="md" color="gray.600" mb={4}>
         <strong>Experience Required: </strong>{job?.experience} years
       </Text>
-      <Button colorScheme="blue" size="lg">
-        Apply Now
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Description: </strong>
+        {job?.description}
+      </Text>
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Posted On: </strong>{job?.postedOn}
+      </Text>
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Job Type: </strong>{job?.jobType}
+      </Text>
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Salary: </strong> {job?.salary ? `₹${job?.salary} per month` : ""}
+      </Text>
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Responsibilities: </strong>
+        <List styleType="disc" ps={4}>
+        {job?.responsibilities?.map((responsibility, index) => (
+          <ListItem key={index}>
+            {responsibility}
+          </ListItem>
+        ))}
+        </List>
+      </Text>
+      <Text fontSize="md" color="gray.600" mb={4}>
+        <strong>Qualifications: </strong>
+        <List styleType="disc" ps={4}>
+        {job?.qualifications?.map((qualification, index) => (
+          <ListItem key={index}>
+            {qualification}
+          </ListItem>
+        ))}
+        </List>
+      </Text>
+      <Button colorScheme="blue" size="lg" onClick={() => navigate(`/application/${jobId}`)} disabled={job?.applicants?.includes(currentUser?.uid)}>
+        {job?.applicants?.includes(currentUser?.uid) ? 'Already Applied' : 'Apply Now'}
       </Button>
+
     </Box>
   );
 };

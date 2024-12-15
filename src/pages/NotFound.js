@@ -5,10 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const NotFound = () => {
   const navigate = useNavigate();
 
-  const handleGoHome = () => {
-    navigate('/');
-  };
-
   return (
     <Box textAlign="center" py={20} px={6}>
       <Heading as="h1" size="2xl" mb={4}>
@@ -17,7 +13,7 @@ const NotFound = () => {
       <Text fontSize="xl" mb={6}>
         Oops! The page you're looking for does not exist.
       </Text>
-      <Button colorScheme="blue" onClick={handleGoHome}>
+      <Button colorScheme="blue" onClick={() => navigate('/')}>
         Go to Home Page
       </Button>
     </Box>

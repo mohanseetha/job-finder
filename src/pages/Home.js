@@ -104,8 +104,8 @@ const Home = () => {
       </Flex>
 
       <Box bg={cardBgColor} p={6} rounded="lg" shadow="lg" maxW="1200px" mx="auto" mb={12}>
-        <Heading as="h2" size="lg" textAlign="center" mb={6} color={sectionHeadingColor}>
-          Search Jobs
+        <Heading as="h2" size="lg" textAlign="left" mb={6} color={sectionHeadingColor}>
+          Search Your Next Job
         </Heading>
         <Flex as="form" gap={4} onSubmit={(e) => e.preventDefault()}>
           <Input
