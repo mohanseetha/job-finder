@@ -168,10 +168,10 @@ const ApplicationPage = () => {
             Apply for {job.title}
           </Heading>
           <Text fontSize="md" mb={4} color={cardTextColor}>
-            Company: {job.company}
+            Company: <strong>{job.company}</strong>
           </Text>
           <Text fontSize="md" mb={8} color={cardTextColor}>
-            Location: {job.location}
+            Location: <strong>{job.location}</strong>
           </Text>
           <VStack spacing={4} align="stretch">
             <Input

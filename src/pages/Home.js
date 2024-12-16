@@ -55,7 +55,10 @@ const Home = () => {
       const filtered = jobs.filter((job) => 
         job.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+        job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        job.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.jobType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredJobs(filtered);
     }

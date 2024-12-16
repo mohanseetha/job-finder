@@ -10,7 +10,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Avatar,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -18,6 +17,7 @@ import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -120,7 +120,7 @@ const Navbar = () => {
                 variant="link"
                 cursor="pointer"
               >
-                <Avatar size="sm" name={user.displayName || "User"} src={user.photoURL || "https://bit.ly/broken-link"} />
+                <CgProfile size={30}/>
               </MenuButton>
               <MenuList>
                 <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>

@@ -51,7 +51,7 @@ onAuthStateChanged(auth, (user) => {
   }
 
   return (
-    <Box p={8} mt={8} maxW="800px" mx="auto" borderWidth={1} borderRadius="lg" boxShadow="lg">
+    <Box p={8} mt={8} mb={8} maxW="70%" mx="auto" borderWidth={1} borderRadius="lg" boxShadow="lg">
       <Heading as="h2" size="xl" mb={4}>
         {job?.title}
       </Heading>
