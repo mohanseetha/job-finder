@@ -103,7 +103,7 @@ const Profile = () => {
                   <Text><strong>Company:</strong> {job.company}</Text>
                   <Text><strong>Location:</strong> {job.location}</Text>
                 </Box>
-                <Button colorScheme="blue" size="sm" onClick={() => navigate(`/jobs/${job.id}`)}>
+                <Button colorScheme="blue" size="sm" onClick={() => navigate(`/job-details/${job.id}`)}>
                   View Job Details
                 </Button>
               </Flex>
