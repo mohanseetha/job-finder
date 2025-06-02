@@ -14,14 +14,18 @@ import {
   FormErrorMessage,
   useToast,
   SimpleGrid,
-  Icon
+  Icon,
 } from "@chakra-ui/react";
 import { FaBriefcase, FaUserAlt, FaRegLightbulb } from "react-icons/fa";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
 const About = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
@@ -116,39 +120,64 @@ const About = () => {
         </VStack>
 
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mb={12}>
-          <Box bg={bgColor} p={6} rounded="lg" shadow={boxShadow}>
-            <Icon as={FaBriefcase} w={10} h={10} color={sectionHeadingColor} mb={4} />
+          <Box bg={cardBgColor} p={6} rounded="lg" shadow={boxShadow}>
+            <Icon
+              as={FaBriefcase}
+              w={10}
+              h={10}
+              color={sectionHeadingColor}
+              mb={4}
+            />
             <Heading size="md" mb={2} color={sectionHeadingColor}>
               Trusted Employers
             </Heading>
             <Text color={textColor}>
-              Access thousands of verified job listings from top-rated companies around the world.
+              Access thousands of verified job listings from top-rated companies
+              around the world.
             </Text>
           </Box>
 
-          <Box bg={bgColor} p={6} rounded="lg" shadow={boxShadow}>
-            <Icon as={FaUserAlt} w={10} h={10} color={sectionHeadingColor} mb={4} />
+          <Box bg={cardBgColor} p={6} rounded="lg" shadow={boxShadow}>
+            <Icon
+              as={FaUserAlt}
+              w={10}
+              h={10}
+              color={sectionHeadingColor}
+              mb={4}
+            />
             <Heading size="md" mb={2} color={sectionHeadingColor}>
               Personalized Recommendations
             </Heading>
             <Text color={textColor}>
-              Get tailored job recommendations based on your skills, preferences, and experience.
+              Get tailored job recommendations based on your skills,
+              preferences, and experience.
             </Text>
           </Box>
 
-          <Box bg={bgColor} p={6} rounded="lg" shadow={boxShadow}>
-            <Icon as={FaRegLightbulb} w={10} h={10} color={sectionHeadingColor} mb={4} />
+          <Box bg={cardBgColor} p={6} rounded="lg" shadow={boxShadow}>
+            <Icon
+              as={FaRegLightbulb}
+              w={10}
+              h={10}
+              color={sectionHeadingColor}
+              mb={4}
+            />
             <Heading size="md" mb={2} color={sectionHeadingColor}>
               Career Guidance
             </Heading>
             <Text color={textColor}>
-              Our platform helps you explore your career path with helpful tips and job search resources.
+              Our platform helps you explore your career path with helpful tips
+              and job search resources.
             </Text>
           </Box>
         </SimpleGrid>
 
         <Box textAlign="center" mt={2} mb={8}>
-          <Button colorScheme="blue" size="lg" onClick={() => window.location.href = "/jobs"}>
+          <Button
+            colorScheme="blue"
+            size="lg"
+            onClick={() => (window.location.href = "/jobs")}
+          >
             Start Your Job Search Today
           </Button>
         </Box>
@@ -161,7 +190,13 @@ const About = () => {
           maxW="600px"
           width="100%"
         >
-          <Heading as="h2" size="lg" textAlign="center" mb={6} color={sectionHeadingColor}>
+          <Heading
+            as="h2"
+            size="lg"
+            textAlign="center"
+            mb={6}
+            color={sectionHeadingColor}
+          >
             Contact Us
           </Heading>
           <form onSubmit={handleSubmit}>
@@ -177,7 +212,9 @@ const About = () => {
                   borderColor={inputBorderColor}
                   focusBorderColor="blue.400"
                 />
-                {errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
+                {errors.name && (
+                  <FormErrorMessage>{errors.name}</FormErrorMessage>
+                )}
               </FormControl>
 
               <FormControl isInvalid={errors.email}>
@@ -191,7 +228,9 @@ const About = () => {
                   borderColor={inputBorderColor}
                   focusBorderColor="blue.400"
                 />
-                {errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
+                {errors.email && (
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
+                )}
               </FormControl>
 
               <FormControl isInvalid={errors.message}>
@@ -204,7 +243,9 @@ const About = () => {
                   borderColor={inputBorderColor}
                   focusBorderColor="blue.400"
                 />
-                {errors.message && <FormErrorMessage>{errors.message}</FormErrorMessage>}
+                {errors.message && (
+                  <FormErrorMessage>{errors.message}</FormErrorMessage>
+                )}
               </FormControl>
 
               <Button

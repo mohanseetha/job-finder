@@ -12,7 +12,7 @@ import {
   useColorModeValue,
   Spinner,
   Badge,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebase";
@@ -31,7 +31,10 @@ const Home = () => {
       try {
         const jobsCollection = collection(db, "jobs");
         const jobsSnapshot = await getDocs(jobsCollection);
-        const jobsList = jobsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const jobsList = jobsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setJobs(jobsList);
         setFilteredJobs(jobsList);
       } catch (error) {
@@ -52,13 +55,16 @@ const Home = () => {
     if (searchQuery.trim() === "") {
       setFilteredJobs(jobs);
     } else {
-      const filtered = jobs.filter((job) => 
-        job.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        job.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.jobType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        job.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = jobs.filter(
+        (job) =>
+          job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          job.skills.some((skill) =>
+            skill.toLowerCase().includes(searchQuery.toLowerCase())
+          ) ||
+          job.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          job.jobType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          job.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredJobs(filtered);
     }
@@ -66,9 +72,12 @@ const Home = () => {
 
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBgColor = useColorModeValue("white", "gray.800");
-  const cardTextColor = useColorModeValue("gray.600", "gray.200");
+  const cardTextColor = useColorModeValue("gray.700", "gray.200");
   const sectionHeadingColor = useColorModeValue("blue.600", "blue.300");
   const borderColor = useColorModeValue("gray.200", "gray.700");
+  const inputBg = useColorModeValue("gray.100", "gray.700");
+  const inputBorder = useColorModeValue("gray.300", "gray.600");
+  const noJobsColor = useColorModeValue("gray.500", "gray.400");
 
   const jobsToDisplay = filteredJobs.slice(0, 9);
 
@@ -99,22 +108,42 @@ const Home = () => {
             colorScheme="blue"
             size="lg"
             onClick={() => navigate("/jobs")}
+            mb={4}
           >
             Explore Jobs
           </Button>
         </VStack>
-        <Image src={banner} aspectRatio={4/3} width={500} borderRadius={10}></Image>
+        <Image src={banner} aspectRatio={4 / 3} width={500} borderRadius={10} />
       </Flex>
 
-      <Box bg={cardBgColor} p={6} rounded="lg" shadow="lg" maxW="1200px" mx="auto" mb={12}>
-        <Heading as="h2" size="lg" textAlign="left" mb={6} color={sectionHeadingColor}>
+      <Box
+        bg={cardBgColor}
+        p={6}
+        rounded="lg"
+        shadow="lg"
+        maxW="1200px"
+        mx="auto"
+        mb={12}
+      >
+        <Heading
+          as="h2"
+          size="lg"
+          textAlign="left"
+          mb={6}
+          color={sectionHeadingColor}
+        >
           Search Your Next Job
         </Heading>
+
         <Flex as="form" gap={4} onSubmit={(e) => e.preventDefault()}>
           <Input
             placeholder="Job title, keywords, or company"
             value={searchQuery}
             onChange={handleSearchChange}
+            bg={inputBg}
+            borderColor={inputBorder}
+            color={cardTextColor}
+            _placeholder={{ color: useColorModeValue("gray.400", "gray.500") }}
           />
           <Button colorScheme="blue" onClick={handleSearch}>
             Search
@@ -122,8 +151,22 @@ const Home = () => {
         </Flex>
       </Box>
 
-      <Box bg={cardBgColor} p={8} rounded="lg" shadow="lg" maxW="1200px" mx="auto" mb={12}>
-        <Heading as="h2" size="lg" textAlign="center" mb={6} color={sectionHeadingColor}>
+      <Box
+        bg={cardBgColor}
+        p={8}
+        rounded="lg"
+        shadow="lg"
+        maxW="1200px"
+        mx="auto"
+        mb={12}
+      >
+        <Heading
+          as="h2"
+          size="lg"
+          textAlign="center"
+          mb={6}
+          color={sectionHeadingColor}
+        >
           Featured Jobs
         </Heading>
         {loading ? (
@@ -148,21 +191,33 @@ const Home = () => {
                   </Heading>
                   <Text color={cardTextColor}>{job.company}</Text>
                   <Text color={cardTextColor}>Location: {job.location}</Text>
-                  <Text color={cardTextColor}>Skills: {job.skills.map((skill) => {
-                    return (
-                      <Badge key={skill} colorScheme="green" mr={2} mb={2} fontSize="sm">
+                  <Flex wrap="wrap" mb={2}>
+                    {job.skills.map((skill) => (
+                      <Badge
+                        key={skill}
+                        colorScheme="green"
+                        mr={2}
+                        mb={2}
+                        fontSize="sm"
+                      >
                         {skill}
                       </Badge>
-                    );
-                  })}</Text>
+                    ))}
+                  </Flex>
                   <Text color={cardTextColor}>Exp: {job.experience} years</Text>
-                  <Button colorScheme="blue" size="sm" onClick={() => navigate(`/job-details/${job.id}`)}>
+                  <Button
+                    colorScheme="blue"
+                    size="sm"
+                    onClick={() => navigate(`/job-details/${job.id}`)}
+                  >
                     View Details
                   </Button>
                 </Stack>
               ))
             ) : (
-              <Text color={cardTextColor}>No jobs found for your search criteria.</Text>
+              <Text color={noJobsColor}>
+                No jobs found for your search criteria.
+              </Text>
             )}
           </SimpleGrid>
         )}
