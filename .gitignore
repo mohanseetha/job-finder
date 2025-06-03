@@ -10,7 +10,6 @@
 
 # production
 /build
-.gitignore
 
 # misc
 .DS_Store
@@ -32,8 +31,5 @@ firebase.indexes.json
 firestore.rules
 
 /.firebase
-/.github
 
-.firebase
-.github
 package-lock.json
