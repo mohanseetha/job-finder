@@ -25,7 +25,8 @@ const Footer = () => {
           JobFinder - Your Career Companion
         </Text>
         <Text fontSize="sm" color={color}>
-          &copy; 2024 JobFinder. All rights reserved.
+          &copy; 2024 JobFinder. All rights reserved. (Jobs are just for demo
+          purposes)
         </Text>
       </Flex>
     </Box>
