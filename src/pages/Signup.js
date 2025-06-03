@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -145,7 +145,6 @@ const SignupForm = () => {
     }
   };
 
-  // Validation
   const isJobSeeker =
     role === "jobseeker" || role === "Job Seeker" || role === "employee";
   const isEmployer =
@@ -393,6 +392,9 @@ const SignupForm = () => {
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
                     placeholder="https://yourcompany.com"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSubmit(e);
+                    }}
                   />
                 </FormControl>
               </>

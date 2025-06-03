@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Text,
@@ -7,6 +7,7 @@ import {
   Badge,
   Button,
   useColorModeValue,
+  Spinner,
 } from "@chakra-ui/react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
@@ -70,7 +71,7 @@ const MobileJobCard = ({ job }) => {
         size="sm"
         colorScheme="blue"
         w="full"
-        onClick={() => navigate(`/jobs/${job.id}`)}
+        onClick={() => navigate(`/job-details/${job.id}`)}
       >
         View Details
       </Button>
@@ -80,6 +81,7 @@ const MobileJobCard = ({ job }) => {
 
 const JobListings = () => {
   const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const headingColor = useColorModeValue("blue.600", "blue.300");
@@ -88,6 +90,7 @@ const JobListings = () => {
 
   useEffect(() => {
     const fetchJobs = async () => {
+      setLoading(true);
       const jobsCollection = collection(db, "jobs");
       const jobSnapshot = await getDocs(jobsCollection);
       const jobList = jobSnapshot.docs.map((doc) => ({
@@ -95,6 +98,7 @@ const JobListings = () => {
         ...doc.data(),
       }));
       setJobs(jobList);
+      setLoading(false);
     };
 
     fetchJobs();
@@ -116,7 +120,11 @@ const JobListings = () => {
       >
         Featured Job Listings
       </Text>
-      {jobs.length > 0 ? (
+      {loading ? (
+        <Flex justify="center" align="center" minH="40vh">
+          <Spinner size="xl" color="blue.400" thickness="4px" />
+        </Flex>
+      ) : jobs.length > 0 ? (
         <>
           {/* Desktop: Original Flex grid with JobCard */}
           <Flex
@@ -142,16 +150,11 @@ const JobListings = () => {
           </Stack>
         </>
       ) : (
-        <Box
-          minH="40vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
+        <Flex justify="center" align="center" minH="40vh">
           <Text color={noJobsColor} fontSize={{ base: "md", md: "lg" }}>
             No jobs available
           </Text>
-        </Box>
+        </Flex>
       )}
     </Box>
   );

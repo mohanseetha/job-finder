@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -89,7 +89,7 @@ const Home = () => {
         justify="space-between"
         maxW="1200px"
         mx="auto"
-        mb={12}
+        mb={8}
       >
         <VStack align="start" spacing={6} maxW="lg">
           <Heading
@@ -123,7 +123,7 @@ const Home = () => {
         shadow="lg"
         maxW="1200px"
         mx="auto"
-        mb={12}
+        mb={8}
       >
         <Heading
           as="h2"
@@ -144,6 +144,12 @@ const Home = () => {
             borderColor={inputBorder}
             color={cardTextColor}
             _placeholder={{ color: useColorModeValue("gray.400", "gray.500") }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch();
+              }
+            }}
           />
           <Button colorScheme="blue" onClick={handleSearch}>
             Search
@@ -158,7 +164,7 @@ const Home = () => {
         shadow="lg"
         maxW="1200px"
         mx="auto"
-        mb={12}
+        mb={1}
       >
         <Heading
           as="h2"
@@ -221,10 +227,6 @@ const Home = () => {
             )}
           </SimpleGrid>
         )}
-      </Box>
-
-      <Box textAlign="center" color={cardTextColor} py={6}>
-        <Text>© 2024 JobFinder. All rights reserved.</Text>
       </Box>
     </Box>
   );

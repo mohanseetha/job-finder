@@ -12,7 +12,7 @@ JobFinder is a job search platform where users can explore job opportunities, ap
 
 ## Tech Stack
 
-- **Frontend**: 
+- **Frontend**:
   - React
   - Chakra UI
 - **Backend**:
@@ -40,10 +40,14 @@ Follow the steps below to get your local development environment up and running:
    git clone https://github.com/mohanseetha/jobfinder.git
    cd jobfinder
 
+   ```
+
 2. **Install dependencies**:
 
-    ```bash
-    npm install
+   ```bash
+   npm install
+
+   ```
 
 3. **Firebase Configuration**:
 
@@ -51,30 +55,33 @@ Follow the steps below to get your local development environment up and running:
 - Set up Firestore and Firebase Authentication.
 - Copy your Firebase configuration from the Firebase console and create a firebase.js file in the src directory, then paste your Firebase config as shown below:
 
-    ```javascript
-    import { initializeApp } from 'firebase/app';
-    import { getFirestore } from 'firebase/firestore';
+  ```javascript
+  import { initializeApp } from "firebase/app";
+  import { getFirestore } from "firebase/firestore";
 
-    const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "your-api-key",
     authDomain: "your-auth-domain",
     projectId: "your-project-id",
     storageBucket: "your-storage-bucket",
     messagingSenderId: "your-sender-id",
     appId: "your-app-id",
-    };
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    export { db };
+  export { db };
+  ```
 
 4. **Start the Development Server**:
 
 - Run the following command to start the app locally:
 
-    ```bash
-    npm start
+  ```bash
+  npm start
+  ```
+
 - This will start the React development server, and you can view the app at http://localhost:3000
 
 ## Firebase Firestore Setup
@@ -83,23 +90,26 @@ Follow the steps below to get your local development environment up and running:
 
 - In the Firestore database, create a collection named jobs.
 - Each document should represent a job listing with the following fields:
-    - title: (string) The job title.
-    - company: (string) The company offering the job.
-    - location: (string) Job location.
-    - skills: (array of strings) List of required skills.
-    - experience: (string) The experience required for the job.
+  - title: (string) The job title.
+  - company: (string) The company offering the job.
+  - location: (string) Job location.
+  - skills: (array of strings) List of required skills.
+  - experience: (string) The experience required for the job.
 
 2. **Example Job Document**:
 
-    ```json
-    {
-    "title": "Software Engineer",
-    "company": "Tech Corp",
-    "location": "San Francisco, CA",
-    "skills": ["JavaScript", "React", "Node.js"],
-    "experience": "3+ years"
-    }
+   ```json
+   {
+     "title": "Software Engineer",
+     "company": "Tech Corp",
+     "location": "San Francisco, CA",
+     "skills": ["JavaScript", "React", "Node.js"],
+     "experience": "3+ years"
+   }
+   ```
+
 ## Contributing
+
 We welcome contributions to improve the functionality of this project. If you'd like to contribute, please follow these steps:
 
 1. Fork the repository.
@@ -110,4 +120,5 @@ We welcome contributions to improve the functionality of this project. If you'd 
 6. Create a new Pull Request.
 
 ## License
+
 This project is licensed under the MIT License.

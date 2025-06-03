@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -18,6 +19,7 @@ import {
   TagCloseButton,
   HStack,
   Icon,
+  Select,
 } from "@chakra-ui/react";
 import { collection, addDoc, getDoc, doc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
@@ -25,9 +27,10 @@ import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 
 const PostJob = () => {
-  // All hooks at the top
   const boxBg = useColorModeValue("white", "gray.800");
   const headingColor = useColorModeValue("blue.700", "blue.200");
+  const inputBg = useColorModeValue("gray.100", "gray.700");
+
   const [formData, setFormData] = useState({
     title: "",
     company: "",
@@ -36,6 +39,14 @@ const PostJob = () => {
     skills: [],
     skillInput: "",
     experience: "",
+    jobType: "",
+    salary: "",
+    responsibilities: [],
+    responsibilityInput: "",
+    requirements: [],
+    requirementInput: "",
+    organization: "",
+    website: "",
   });
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -43,7 +54,6 @@ const PostJob = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  // Protect route: Only allow logged-in employers
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (!firebaseUser) {
@@ -57,7 +67,7 @@ const PostJob = () => {
         navigate("/login");
         return;
       }
-      // Check role
+
       const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
       if (!userDoc.exists() || userDoc.data().role !== "Employer") {
         toast({
@@ -71,10 +81,15 @@ const PostJob = () => {
         return;
       }
       setUser({ ...userDoc.data(), uid: firebaseUser.uid });
+      setFormData((prev) => ({
+        ...prev,
+        company: userDoc.data().organization || "",
+        organization: userDoc.data().organization || "",
+        website: userDoc.data().website || "",
+      }));
       setCheckingAuth(false);
     });
     return () => unsubscribe();
-    // eslint-disable-next-line
   }, []);
 
   const handleChange = (e) => {
@@ -82,11 +97,9 @@ const PostJob = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Skill tag input logic
   const handleSkillInputChange = (e) => {
     setFormData((prev) => ({ ...prev, skillInput: e.target.value }));
   };
-
   const handleAddSkill = () => {
     const skill = formData.skillInput.trim();
     if (
@@ -101,14 +114,12 @@ const PostJob = () => {
       }));
     }
   };
-
   const handleRemoveSkill = (skillToRemove) => {
     setFormData((prev) => ({
       ...prev,
       skills: prev.skills.filter((skill) => skill !== skillToRemove),
     }));
   };
-
   const handleSkillInputKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
@@ -116,22 +127,98 @@ const PostJob = () => {
     }
   };
 
+  const handleResponsibilityInputChange = (e) => {
+    setFormData((prev) => ({ ...prev, responsibilityInput: e.target.value }));
+  };
+  const handleAddResponsibility = () => {
+    const responsibility = formData.responsibilityInput.trim();
+    if (
+      responsibility &&
+      !formData.responsibilities.includes(responsibility) &&
+      formData.responsibilities.length < 15
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        responsibilities: [...prev.responsibilities, responsibility],
+        responsibilityInput: "",
+      }));
+    }
+  };
+  const handleRemoveResponsibility = (item) => {
+    setFormData((prev) => ({
+      ...prev,
+      responsibilities: prev.responsibilities.filter((r) => r !== item),
+    }));
+  };
+  const handleResponsibilityInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddResponsibility();
+    }
+  };
+
+  const handleRequirementInputChange = (e) => {
+    setFormData((prev) => ({ ...prev, requirementInput: e.target.value }));
+  };
+  const handleAddRequirement = () => {
+    const requirement = formData.requirementInput.trim();
+    if (
+      requirement &&
+      !formData.requirements.includes(requirement) &&
+      formData.requirements.length < 15
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        requirements: [...prev.requirements, requirement],
+        requirementInput: "",
+      }));
+    }
+  };
+  const handleRemoveRequirement = (item) => {
+    setFormData((prev) => ({
+      ...prev,
+      requirements: prev.requirements.filter((r) => r !== item),
+    }));
+  };
+  const handleRequirementInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddRequirement();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, company, location, description, skills, experience } =
-      formData;
+    const {
+      title,
+      company,
+      location,
+      description,
+      skills,
+      experience,
+      salary,
+      jobType,
+      responsibilities,
+      requirements,
+      organization,
+      website,
+    } = formData;
+
     if (
       !title ||
       !company ||
       !location ||
       !description ||
       skills.length === 0 ||
-      !experience
+      !experience ||
+      responsibilities.length === 0 ||
+      requirements.length === 0
     ) {
       toast({
         title: "Validation Error",
-        description: "All fields are required and at least one skill.",
+        description:
+          "All fields are required, including at least one skill, responsibility, and requirement.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -150,8 +237,15 @@ const PostJob = () => {
         description,
         skills,
         experience,
+        responsibilities,
+        requirements,
+        organization,
+        website,
+        jobType,
+        salary,
         postedBy: user.uid,
         createdAt: new Date(),
+        applicants: [],
       });
 
       toast({
@@ -164,12 +258,18 @@ const PostJob = () => {
 
       setFormData({
         title: "",
-        company: "",
+        company: organization,
         location: "",
         description: "",
         skills: [],
         skillInput: "",
         experience: "",
+        responsibilities: [],
+        responsibilityInput: "",
+        requirements: [],
+        requirementInput: "",
+        organization,
+        website,
       });
       navigate("/profile");
     } catch (error) {
@@ -223,13 +323,22 @@ const PostJob = () => {
           </FormControl>
 
           <FormControl isRequired>
-            <FormLabel>Company</FormLabel>
+            <FormLabel>Organization Name</FormLabel>
             <Input
               name="company"
-              placeholder="Enter company name"
-              value={formData.company}
-              onChange={handleChange}
-              size="lg"
+              value={formData.organization}
+              isReadOnly
+              bg={inputBg}
+            />
+          </FormControl>
+
+          <FormControl isRequired>
+            <FormLabel>Company Website</FormLabel>
+            <Input
+              name="website"
+              value={formData.website}
+              isReadOnly
+              bg={inputBg}
             />
           </FormControl>
 
@@ -251,12 +360,12 @@ const PostJob = () => {
               placeholder="Describe the role, responsibilities, and what makes this job unique..."
               value={formData.description}
               onChange={handleChange}
-              rows={5}
+              rows={4}
               size="lg"
             />
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl>
             <FormLabel>Required Skills</FormLabel>
             <HStack wrap="wrap" spacing={2} mb={2}>
               {formData.skills.map((skill) => (
@@ -311,6 +420,133 @@ const PostJob = () => {
               type="number"
               min={0}
             />
+          </FormControl>
+
+          <FormControl isRequired>
+            <FormLabel>Job Type</FormLabel>
+            <Select
+              name="jobType"
+              placeholder="Select job type"
+              value={formData.jobType || ""}
+              onChange={handleChange}
+              size="lg"
+            >
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+              <option value="Internship">Internship</option>
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Salary</FormLabel>
+            <Input
+              name="salary"
+              placeholder="Enter Salary Per Month (optional)"
+              value={formData.salary}
+              onChange={handleChange}
+              size="lg"
+              type="number"
+              min={0}
+            />
+          </FormControl>
+
+          {/* Responsibilities */}
+          <FormControl>
+            <FormLabel>Objectives / Responsibilities</FormLabel>
+            <VStack align="stretch" spacing={2} mb={2}>
+              {formData.responsibilities.map((item) => (
+                <Tag
+                  key={item}
+                  size="md"
+                  colorScheme="purple"
+                  borderRadius="full"
+                  variant="solid"
+                >
+                  <TagLabel>{item}</TagLabel>
+                  <TagCloseButton
+                    onClick={() => handleRemoveResponsibility(item)}
+                  />
+                </Tag>
+              ))}
+            </VStack>
+            <Flex>
+              <Input
+                name="responsibilityInput"
+                placeholder="Type a responsibility and press Enter or +"
+                value={formData.responsibilityInput}
+                onChange={handleResponsibilityInputChange}
+                onKeyDown={handleResponsibilityInputKeyDown}
+                size="md"
+                flex={1}
+              />
+              <Button
+                ml={2}
+                leftIcon={<Icon as={FaPlus} />}
+                colorScheme="purple"
+                onClick={handleAddResponsibility}
+                isDisabled={
+                  !formData.responsibilityInput.trim() ||
+                  formData.responsibilities.includes(
+                    formData.responsibilityInput.trim()
+                  )
+                }
+              >
+                Add
+              </Button>
+            </Flex>
+            <Text fontSize="xs" color="gray.500" mt={1}>
+              Add up to 15 responsibilities. Press Enter or click Add after
+              each.
+            </Text>
+          </FormControl>
+
+          {/* Requirements */}
+          <FormControl>
+            <FormLabel>Requirements</FormLabel>
+            <VStack align="stretch" spacing={2} mb={2}>
+              {formData.requirements.map((item) => (
+                <Tag
+                  key={item}
+                  size="md"
+                  colorScheme="teal"
+                  borderRadius="full"
+                  variant="solid"
+                >
+                  <TagLabel>{item}</TagLabel>
+                  <TagCloseButton
+                    onClick={() => handleRemoveRequirement(item)}
+                  />
+                </Tag>
+              ))}
+            </VStack>
+            <Flex>
+              <Input
+                name="requirementInput"
+                placeholder="Type a requirement and press Enter or +"
+                value={formData.requirementInput}
+                onChange={handleRequirementInputChange}
+                onKeyDown={handleRequirementInputKeyDown}
+                size="md"
+                flex={1}
+              />
+              <Button
+                ml={2}
+                leftIcon={<Icon as={FaPlus} />}
+                colorScheme="teal"
+                onClick={handleAddRequirement}
+                isDisabled={
+                  !formData.requirementInput.trim() ||
+                  formData.requirements.includes(
+                    formData.requirementInput.trim()
+                  )
+                }
+              >
+                Add
+              </Button>
+            </Flex>
+            <Text fontSize="xs" color="gray.500" mt={1}>
+              Add up to 15 requirements. Press Enter or click Add after each.
+            </Text>
           </FormControl>
 
           <Button

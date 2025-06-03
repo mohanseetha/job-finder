@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -91,6 +91,9 @@ const Login = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleLogin();
+              }}
             />
           </FormControl>
           <Button colorScheme="blue" isLoading={loading} onClick={handleLogin}>

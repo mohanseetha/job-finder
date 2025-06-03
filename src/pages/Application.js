@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -14,8 +15,6 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Progress,
-  Link,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -27,17 +26,9 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
-import { useAuth } from "../hooks/useAuth";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
 const validatePhone = (phone) => /^\d{10,15}$/.test(phone.replace(/\D/g, ""));
 
 const ApplicationPage = () => {
@@ -47,18 +38,29 @@ const ApplicationPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [errors, setErrors] = useState({});
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [resumeFileUrl, setResumeFileUrl] = useState("");
-  const { currentUser } = useAuth();
+  const [userRole, setUserRole] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [applicantData, setApplicantData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    coverLetter: "",
+    experience: "",
+    resumeLink: "",
+  });
+
   const toast = useToast();
   const navigate = useNavigate();
 
-  const [userRole, setUserRole] = useState(null);
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const cardBgColor = useColorModeValue("white", "gray.800");
+  const cardTextColor = useColorModeValue("gray.600", "gray.200");
+  const sectionHeadingColor = useColorModeValue("blue.600", "blue.300");
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
       if (user) {
         const userRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userRef);
@@ -66,27 +68,20 @@ const ApplicationPage = () => {
           const role = userDoc.data().role;
           setUserRole(role);
           if (role === "Employer") {
-            navigate("/*");
+            toast({
+              title: "Access Denied",
+              description: "Employers cannot apply for jobs.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+            navigate("/");
           }
         }
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
-
-  const [applicantData, setApplicantData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    coverLetter: "",
-    experience: "",
-    skills: "",
-  });
-
-  const bgColor = useColorModeValue("gray.50", "gray.900");
-  const cardBgColor = useColorModeValue("white", "gray.800");
-  const cardTextColor = useColorModeValue("gray.600", "gray.200");
-  const sectionHeadingColor = useColorModeValue("blue.600", "blue.300");
+  }, [navigate, toast]);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -119,7 +114,6 @@ const ApplicationPage = () => {
       }
     };
     fetchJobDetails();
-    // eslint-disable-next-line
   }, [jobId, navigate, toast, currentUser]);
 
   useEffect(() => {
@@ -139,81 +133,16 @@ const ApplicationPage = () => {
   };
 
   const validateFields = () => {
-    const { name, email, phone, experience, skills } = applicantData;
+    const { name, email, phone, experience, resumeLink } = applicantData;
     const newErrors = {};
     if (!name.trim()) newErrors.name = "Name is required.";
     if (!email.trim()) newErrors.email = "Email is required.";
     else if (!validateEmail(email)) newErrors.email = "Invalid email address.";
     if (!phone.trim()) newErrors.phone = "Phone is required.";
     else if (!validatePhone(phone)) newErrors.phone = "Invalid phone number.";
-    if (!resumeFileUrl) newErrors.resume = "Resume file is required.";
+    if (!resumeLink.trim()) newErrors.resumeLink = "Resume link is required.";
     if (!experience.trim()) newErrors.experience = "Experience is required.";
-    if (!skills.trim()) newErrors.skills = "Skills are required.";
     return newErrors;
-  };
-
-  const handleResumeUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: "Invalid File Type",
-        description: "Only PDF or DOC/DOCX files are allowed.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setUploading(true);
-    setUploadProgress(0);
-
-    const storage = getStorage();
-    const storageRef = ref(
-      storage,
-      `resumes/${currentUser?.uid || "anonymous"}_${Date.now()}_${file.name}`
-    );
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setUploadProgress(progress);
-      },
-      (error) => {
-        setUploading(false);
-        toast({
-          title: "Upload Error",
-          description: "Failed to upload resume. Try again.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setResumeFileUrl(downloadURL);
-          setUploading(false);
-          toast({
-            title: "Resume Uploaded",
-            description: "Your resume has been uploaded successfully.",
-            status: "success",
-            duration: 2000,
-            isClosable: true,
-          });
-        });
-      }
-    );
   };
 
   const handleApply = async () => {
@@ -237,16 +166,28 @@ const ApplicationPage = () => {
         jobId: job.id,
         userId: currentUser?.uid || "anonymous",
         ...applicantData,
-        resumeLink: resumeFileUrl,
         appliedAt: new Date(),
+      }).catch((error) => {
+        console.error("Application addDoc error:", error, {
+          jobId: job.id,
+          userId: currentUser?.uid,
+          applicantData,
+        });
       });
 
       try {
         const jobRef = doc(db, "jobs", job.id);
+        console.log("Updating job applicants array:", {
+          jobId: job.id,
+          jobApplicants: job.applicants,
+          currentUserUid: currentUser?.uid,
+        });
         await updateDoc(jobRef, {
           applicants: arrayUnion(currentUser?.uid),
         });
-      } catch {}
+      } catch (error) {
+        console.error("Failed to update applicants array:", error);
+      }
 
       try {
         const userRef = doc(db, "users", currentUser?.uid);
@@ -269,9 +210,9 @@ const ApplicationPage = () => {
         phone: "",
         coverLetter: "",
         experience: "",
-        skills: "",
+        resumeLink: "",
+        status: "applied",
       });
-      setResumeFileUrl("");
       setAlreadyApplied(true);
       setTimeout(() => navigate("/jobs"), 1500);
     } catch (error) {
@@ -314,8 +255,16 @@ const ApplicationPage = () => {
           <Text fontSize="md" mb={2} color={cardTextColor}>
             Company: <strong>{job.company}</strong>
           </Text>
-          <Text fontSize="md" mb={6} color={cardTextColor}>
+          <Text fontSize="md" mb={2} color={cardTextColor}>
             Location: <strong>{job.location}</strong>
+          </Text>
+          <Text fontSize="sm" mb={6} color={cardTextColor}>
+            Posted On:{" "}
+            <strong>
+              {job.createdAt && job.createdAt.toDate
+                ? job.createdAt.toDate().toLocaleDateString()
+                : ""}
+            </strong>
           </Text>
           <VStack spacing={4} align="stretch">
             <FormControl isInvalid={!!errors.name} isRequired>
@@ -353,36 +302,16 @@ const ApplicationPage = () => {
               />
               <FormErrorMessage>{errors.phone}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={!!errors.resume} isRequired>
-              <FormLabel>Resume (PDF, DOC, DOCX)</FormLabel>
+            <FormControl isInvalid={!!errors.resumeLink} isRequired>
+              <FormLabel>Resume Link (Google Drive, Dropbox, etc.)</FormLabel>
               <Input
-                type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                onChange={handleResumeUpload}
-                disabled={uploading || submitting}
+                placeholder="Paste a link to your resume (PDF/DOC)"
+                name="resumeLink"
+                type="url"
+                value={applicantData.resumeLink}
+                onChange={handleInputChange}
               />
-              {uploading && (
-                <Progress
-                  value={uploadProgress}
-                  size="sm"
-                  colorScheme="blue"
-                  mt={2}
-                />
-              )}
-              {resumeFileUrl && (
-                <Text mt={2} color="green.500" fontSize="sm">
-                  Uploaded:{" "}
-                  <Link
-                    href={resumeFileUrl}
-                    isExternal
-                    color="blue.500"
-                    textDecoration="underline"
-                  >
-                    View Resume
-                  </Link>
-                </Text>
-              )}
-              <FormErrorMessage>{errors.resume}</FormErrorMessage>
+              <FormErrorMessage>{errors.resumeLink}</FormErrorMessage>
             </FormControl>
             <FormControl>
               <FormLabel>Cover Letter</FormLabel>
@@ -405,23 +334,12 @@ const ApplicationPage = () => {
               />
               <FormErrorMessage>{errors.experience}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={!!errors.skills} isRequired>
-              <FormLabel>Skills</FormLabel>
-              <Textarea
-                placeholder="Skills (e.g., React, Firebase, Python)"
-                name="skills"
-                value={applicantData.skills}
-                onChange={handleInputChange}
-                rows={2}
-              />
-              <FormErrorMessage>{errors.skills}</FormErrorMessage>
-            </FormControl>
             <Button
               colorScheme="blue"
               size="lg"
               onClick={handleApply}
               isLoading={submitting}
-              isDisabled={alreadyApplied || submitting || uploading}
+              isDisabled={alreadyApplied || submitting}
               w="full"
             >
               {alreadyApplied ? "Already Applied" : "Submit Application"}

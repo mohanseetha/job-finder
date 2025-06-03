@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -44,7 +44,6 @@ const Navbar = () => {
     return unsubscribe;
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
@@ -71,7 +70,6 @@ const Navbar = () => {
       top={0}
     >
       <Flex h={16} align="center" maxW="1200px" mx="auto">
-        {/* Logo */}
         <Box
           fontSize="2xl"
           fontWeight="bold"
@@ -108,7 +106,6 @@ const Navbar = () => {
           ))}
         </HStack>
         <Spacer />
-        {/* Theme & Auth */}
         <HStack spacing={2}>
           <IconButton
             size="md"
@@ -173,56 +170,6 @@ const Navbar = () => {
                 {link.name}
               </ChakraLink>
             ))}
-            <HStack pt={2} justify="flex-end">
-              <IconButton
-                size="md"
-                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                aria-label="Toggle Theme"
-                onClick={toggleColorMode}
-                variant="ghost"
-              />
-              {user ? (
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    rounded="full"
-                    variant="ghost"
-                    minW={0}
-                    aria-label="User menu"
-                  >
-                    <CgProfile size={28} />
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem
-                      onClick={() => {
-                        setIsOpen(false);
-                        navigate("/profile");
-                      }}
-                    >
-                      Profile
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setIsOpen(false);
-                        handleLogout();
-                      }}
-                    >
-                      Logout
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              ) : (
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate("/login");
-                  }}
-                >
-                  Login
-                </Button>
-              )}
-            </HStack>
           </VStack>
         </Box>
       </Collapse>
