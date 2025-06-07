@@ -1,12 +1,10 @@
-# 🚀 JobFinder
-
+# JobFinder
 JobFinder is a comprehensive job search web application that simplifies the job hunting process for both job seekers and employers. Built with modern web technologies, it provides a seamless experience for browsing, filtering, and applying to job opportunities from verified companies across various industries.
 
 ![Demo](assets/demo.gif)
 
-## ✨ Key Features
-
-### 🎯 For Job Seekers
+## Key Features
+### For Job Seekers
 
 - **Smart Job Search**: Browse through carefully curated job listings from top companies
 - **Advanced Filtering**: Filter opportunities by job title, location, experience level, and required skills
@@ -14,13 +12,13 @@ JobFinder is a comprehensive job search web application that simplifies the job 
 - **Responsive Design**: Access the platform seamlessly across desktop, tablet, and mobile devices
 - **Secure Authentication**: Safe and secure login/signup process powered by Firebase Auth
 
-### 🏢 For Employers
+### For Employers
 
 - **Easy Job Posting**: Simple interface for posting new job opportunities
 - **Real-time Management**: Instant updates and management of job listings
 - **Verified Platform**: Showcase opportunities on a trusted, professional platform
 
-### 🔧 Technical Highlights
+### Technical Highlights
 
 - **Lightning Fast**: Optimized React components for superior performance
 - **Modern UI**: Clean, intuitive interface built with Chakra UI
@@ -28,7 +26,7 @@ JobFinder is a comprehensive job search web application that simplifies the job 
 - **Real-time Database**: Instant data synchronization with Firestore
 - **Mobile-First**: Responsive design that works perfectly on all screen sizes
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -43,17 +41,7 @@ JobFinder is a comprehensive job search web application that simplifies the job 
 - **Firebase Authentication** - Secure user authentication system
 - **Firebase Hosting** - Fast and secure web hosting
 
-## ⚙️ Installation & Setup
-
-### Prerequisites
-
-Make sure you have the following installed on your machine:
-
-- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
-- **npm** (v6 or higher) or **yarn**
-- **Git** - [Download here](https://git-scm.com/)
-
-### Quick Start
+## Installation & Setup
 
 1. **Clone the Repository**
 
@@ -109,7 +97,7 @@ Make sure you have the following installed on your machine:
 
    The application will open at [http://localhost:3000](http://localhost:3000)
 
-## 📊 Database Schema
+## Database Schema
 
 ### Jobs Collection Structure
 
@@ -130,4 +118,5 @@ Make sure you have the following installed on your machine:
 }
 ```
 
-**Made by [Mohan Seetha](https://github.com/mohanseetha)**
+## Contributing
+Pull requests are welcome! Please open an issue to discuss major changes.
